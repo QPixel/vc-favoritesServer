@@ -84,6 +84,20 @@ export default definePlugin({
                 },
             ]
         },
+        // patch nitro check
+        {
+            find: '"getFavoritesAccess"',
+            replacement: [
+                {
+                    match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
+                    replace: "return $1({isExperiementEnabled: true, hasHigherPrvileges:true,isFreemium:false,isPremiumTier2:true})"
+                },
+                {
+                    match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
+                    replace: "return $1({isExperiementEnabled: true, hasHigherPrvileges:true,isFreemium:false,isPremiumTier2:true})"
+                },
+            ]
+        },
         // when we write to the proto we want to handle the favorite channel update ourselves
         // this is to ensure we don't hit the discord api
         {
@@ -91,7 +105,7 @@ export default definePlugin({
             replacement: [
                 {
                     match: /if\(null==(\i).protoToSave\)/,
-                    replace: "if($1.protoToSave.favorites !== null){$self.handleFavoriteChannel($1.protoToSave.favorites); return;}else if(null==$1.protoToSave)"
+                    replace: "if($1.protoToSave.favorites !== null || $1.protoToSave.favorites !== undefined){$self.handleFavoriteChannel($1.protoToSave.favorites); return;}else if(null==$1.protoToSave)"
                 }
             ]
         },
