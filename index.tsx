@@ -89,13 +89,9 @@ export default definePlugin({
             find: '"getFavoritesAccess"',
             replacement: [
                 {
-                    match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
-                    replace: "return $1({isExperimentEnabled: true, hasHigherPrivileges:true,isFreemium:false,isPremiumTier2:true})"
-                },
-                {
-                    match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
-                    replace: "return $1({isExperimentEnabled: true, hasHigherPrivileges:true,isFreemium:false,isPremiumTier2:true})"
-                },
+                    match: /\{hasAccess:\i,isExperimentEnabled:\i[^}]+}/,
+                    replace: "{hasAccess: true, isExperimentEnabled: true, isFreemium:false, hasHigherPrivileges:true, favoriteLimit: 200, canUpsellFavoriteLimit: false}"
+                }
             ]
         },
         // when we write to the proto we want to handle the favorite channel update ourselves
@@ -105,7 +101,7 @@ export default definePlugin({
             replacement: [
                 {
                     match: /if\(null==(\i).protoToSave\)/,
-                    replace: "if($1.protoToSave.favorites !== null || $1.protoToSave.favorites !== undefined){$self.handleFavoriteChannel($1.protoToSave.favorites); return;}else if(null==$1.protoToSave)"
+                    replace: "if($self.shouldHandleFavoriteChannel($1.protoToSave)){ $self.handleFavoriteChannel($1.protoToSave.favorites); if (Object.keys($1.protoToSave).length === 1) { return; } else { delete $1.protoToSave.favorites; }}else if(null==$1.protoToSave)"
                 }
             ]
         },
@@ -120,6 +116,11 @@ export default definePlugin({
             ]
         }
     ],
+    // check if we should handle the favorite channel update, but also if there is an enmasse change of the proto
+    shouldHandleFavoriteChannel(proto: any) {
+        return proto.favorites !== null && proto.favorites !== undefined;
+    },
+
     handleProtoChange(proto: any, user: any) {
         try {
             if (proto == null || typeof proto === "string") return;
