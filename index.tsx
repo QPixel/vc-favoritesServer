@@ -90,11 +90,11 @@ export default definePlugin({
             replacement: [
                 {
                     match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
-                    replace: "return $1({isExperiementEnabled: true, hasHigherPrvileges:true,isFreemium:false,isPremiumTier2:true})"
+                    replace: "return $1({isExperimentEnabled: true, hasHigherPrivileges:true,isFreemium:false,isPremiumTier2:true})"
                 },
                 {
                     match: /return (\i)\(\{isExperimentEnabled:\i[^}]+}\)/,
-                    replace: "return $1({isExperiementEnabled: true, hasHigherPrvileges:true,isFreemium:false,isPremiumTier2:true})"
+                    replace: "return $1({isExperimentEnabled: true, hasHigherPrivileges:true,isFreemium:false,isPremiumTier2:true})"
                 },
             ]
         },
@@ -151,7 +151,7 @@ export default definePlugin({
     handleFavoriteChannel(favorites: { favoriteChannels: FavoritesProto, muted: boolean; }) {
         console.log("favorites proto update", favorites);
 
-        if (favorites.favoriteChannels === null) {
+        if (favorites.favoriteChannels === null || favorites.favoriteChannels === undefined) {
             return;
         }
 
