@@ -151,7 +151,12 @@ export default definePlugin({
                 favoriteChannels: {},
             };
         }
-
+        // handle deleted channels
+        for (const id in s.syncedPerAccountState[userId].favoriteChannels) {
+            if (!favorites.favoriteChannels[id]) {
+                delete s.syncedPerAccountState[userId].favoriteChannels[id];
+            }
+        }
         for (const id in favorites.favoriteChannels) {
             s.syncedPerAccountState[userId].favoriteChannels[id] = favorites.favoriteChannels[id];
         }
