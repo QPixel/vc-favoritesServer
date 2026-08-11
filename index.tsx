@@ -118,6 +118,7 @@ export default definePlugin({
     ],
     // check if we should handle the favorite channel update, but also if there is an enmasse change of the proto
     shouldHandleFavoriteChannel(proto: any) {
+        console.log("should handle favorite channel", proto);
         return proto.favorites !== null && proto.favorites !== undefined;
     },
 
@@ -135,9 +136,14 @@ export default definePlugin({
             if (!s.syncedPerAccountState?.[userId]) {
                 s.syncedPerAccountState ??= {};
                 s.syncedPerAccountState[userId] ??= {
-                    favoriteChannels: {},
+                    favoriteChannels: {}
                 };
             }
+
+            if (!s.syncedPerAccountState[userId].favoriteChannels) {
+                s.syncedPerAccountState[userId].favoriteChannels = {};
+            }
+
             const favoritesSettingOverwrite = FavoritesSettingsActionCreators.create({
                 ...proto.favorites,
                 favoriteChannels: s.syncedPerAccountState[userId].favoriteChannels,
